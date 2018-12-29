@@ -1,41 +1,35 @@
-package com.lionapps.wili.androidthingshome;
+package com.lionapps.wili.androidthingshome.arduino;
 
-import android.util.Log;
 import com.google.android.things.pio.PeripheralManager;
 import com.google.android.things.pio.UartDevice;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class MDht22Driver implements BaseSensor, AutoCloseable {
-    private static final String TAG = "Dht22Driver";
-    private static final int CHUNK_SIZE = 10;
+public class ArduinoDriver implements AutoCloseable {
+    private static final String TAG = ArduinoDriver.class.getSimpleName();
     private ByteBuffer mMessageBuffer = ByteBuffer.allocate(10);
-    private final Arduino arduino;
-    private UartDevice mDevice;
+    private UartDevice mUartDevice;
     private boolean receiving;
-    private PeripheralManager mPeripheralManagerService;
 
-    public MDht22Driver(Arduino arduino) {
-        this.arduino = arduino;
+    public ArduinoDriver() {
     }
 
     public void startup() {
-        mPeripheralManagerService = PeripheralManager.getInstance();
-
         try {
-            this.mDevice = mPeripheralManagerService.openUartDevice(this.arduino.getUartDeviceName());
-            this.mDevice.setDataSize(this.arduino.getDataBits());
-            this.mDevice.setParity(0);
-            this.mDevice.setStopBits(this.arduino.getStopBits());
-            this.mDevice.setBaudrate(this.arduino.getBaudRate());
-        } catch (IOException var5) {
+            this.mUartDevice = PeripheralManager.getInstance().openUartDevice(Arduino.getUartDeviceName());
+            this.mUartDevice.setDataSize(Arduino.getDataBits());
+            this.mUartDevice.setParity(0);
+            this.mUartDevice.setStopBits(Arduino.getStopBits());
+            this.mUartDevice.setBaudrate(Arduino.getBaudRate());
+        } catch (IOException e) {
             try {
                 this.close();
-            } catch (Exception var4) {
-                var4.printStackTrace();
+            } catch (Exception e1) {
+                e1.printStackTrace();
             }
 
-            throw new IllegalStateException("Sensor can't start", var5);
+            throw new IllegalStateException("Arduino startup error", e);
         }
     }
 
@@ -46,8 +40,8 @@ public class MDht22Driver implements BaseSensor, AutoCloseable {
 
         try {
             response = this.fillBuffer(buffer, mode);
-        } catch (IOException var5) {
-            var5.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return response;
@@ -60,23 +54,23 @@ public class MDht22Driver implements BaseSensor, AutoCloseable {
 
         try {
             response = this.fillBuffer(buffer, mode);
-        } catch (IOException var5) {
-            var5.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return response;
     }
 
     private String fillBuffer(byte[] buffer, String mode) throws IOException {
-        this.mDevice.write(mode.getBytes(), mode.length());
+        this.mUartDevice.write(mode.getBytes(), mode.length());
 
         try {
             Thread.sleep(500L);
-        } catch (InterruptedException var4) {
-            var4.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        this.mDevice.read(buffer, buffer.length);
+        this.mUartDevice.read(buffer, buffer.length);
         this.processBuffer(buffer, buffer.length);
         return (new String(this.mMessageBuffer.array(), "UTF-8")).replaceAll("\u0000", "");
     }
@@ -96,23 +90,23 @@ public class MDht22Driver implements BaseSensor, AutoCloseable {
     }
 
     public void close() throws Exception {
-        if (this.mDevice != null) {
+        if (this.mUartDevice != null) {
             try {
-                this.mDevice.close();
+                this.mUartDevice.close();
             } finally {
-                this.mDevice = null;
+                this.mUartDevice = null;
             }
         }
 
     }
 
-    public void shutdown() {
-        if (this.mDevice != null) {
+    public void destroy() {
+        if (this.mUartDevice != null) {
             try {
-                this.mDevice.close();
-                this.mDevice = null;
-            } catch (IOException var2) {
-                Log.w("Dht22Driver", "Unable to close UART device", var2);
+                this.mUartDevice.close();
+                this.mUartDevice = null;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
