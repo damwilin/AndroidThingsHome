@@ -1,26 +1,41 @@
 package com.lionapps.wili.androidthingshome.ui;
 
-import com.lionapps.wili.androidthingshome.arduino.ArduinoDriver;
+import android.app.Application;
 
-import androidx.lifecycle.ViewModel;
+import com.lionapps.wili.androidthingshome.repository.Measurement;
+import com.lionapps.wili.androidthingshome.repository.Repository;
+import com.lionapps.wili.androidthingshome.task.Measure;
 
-public class MainViewModel extends ViewModel {
-    private ArduinoDriver arduinoDriver;
+import java.util.List;
 
-    public MainViewModel() {
-        setupArduinoDriver();
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+
+public class MainViewModel extends AndroidViewModel {
+    private Repository repository;
+    private Measure measure;
+
+    public MainViewModel(@NonNull Application application) {
+        super(application);
+        repository = new Repository(application);
+        measure = new Measure(repository);
     }
 
-    private void setupArduinoDriver(){
-        arduinoDriver = new ArduinoDriver();
-        arduinoDriver.startup();
+    public void startMeasuring(){
+        measure.startMeasuring(60000l);
     }
 
-    public String getHumidity(){
-        return arduinoDriver.getHumidity();
+    public void stopMeasuring(){
+        measure.stopMeasuring();
     }
 
-    public String getTemperature(){
-        return arduinoDriver.getTemperature();
+    public LiveData<List<Measurement>> getAllMeasurements(){
+        return repository.getAllMeasurement();
+    }
+
+
+    public void deleteTable(){
+        repository.deleteTable();
     }
 }

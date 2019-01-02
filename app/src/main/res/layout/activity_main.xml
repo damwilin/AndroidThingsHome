@@ -1,32 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@android:color/black"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.MainActivity">
 
-    <TextView
-        android:textSize="64sp"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/temperatureTextView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linear_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="temperature"/>
+        android:orientation="horizontal">
 
-    <TextView
-        android:textSize="64sp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/temperatureTextView"
-        android:id="@+id/humidityTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="humidity" />
-    <Button
-        android:layout_margin="24dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/humidityTextView"
-        android:id="@+id/getDataButton"
-        android:text="get Data"
-        android:layout_width="240dp"
-        android:layout_height="50dp" />
-</RelativeLayout>
+        <TextView
+            android:textColor="@android:color/white"
+            android:id="@+id/temperatureTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="temperature"
+            android:textAlignment="center"
+            android:textSize="36dp" />
+
+        <TextView
+            android:textColor="@android:color/white"
+            android:id="@+id/humidityTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/temperatureTextView"
+            android:layout_weight="1"
+            android:text="humidity"
+            android:textAlignment="center"
+            android:textSize="36dp" />
+
+    </LinearLayout>
+
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/temperature_graph_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_below="@id/linear_layout" />
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/humidity_graph_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_below="@id/temperature_graph_view" />
+
+</LinearLayout>

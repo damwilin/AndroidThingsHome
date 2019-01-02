@@ -1,13 +1,20 @@
 package com.lionapps.wili.androidthingshome.ui;
 
-import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 import com.lionapps.wili.androidthingshome.R;
+import com.lionapps.wili.androidthingshome.repository.Measurement;
 
+import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -31,7 +38,7 @@ import butterknife.ButterKnife;
  *
  * @see <a href="https://github.com/androidthings/contrib-drivers#readme">https://github.com/androidthings/contrib-drivers#readme</a>
  */
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     private MainViewModel viewModel;
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -41,27 +48,63 @@ public class MainActivity extends Activity {
     TextView mTemperature;
     @BindView(R.id.humidityTextView)
     TextView mHumidity;
-    @BindView(R.id.getDataButton)
-    Button getDataButton;
+    @BindView(R.id.temperature_graph_view)
+    GraphView mTempGraphView;
+    @BindView(R.id.humidity_graph_view)
+    GraphView mHumGraphView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        viewModel = new MainViewModel();
+        setupGraphs();
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.startMeasuring();
 
-
-
-
-
-        getDataButton.setOnClickListener(new View.OnClickListener() {
+        viewModel.getAllMeasurements().observe(this, new Observer<List<Measurement>>() {
             @Override
-            public void onClick(View v) {
-                mTemperature.setText(String.format("%s°C", viewModel.getTemperature()));
-                mHumidity.setText(String.format("%s%%", viewModel.getHumidity()));
+            public void onChanged(List<Measurement> measurements) {
+                Measurement measurement = measurements.get(measurements.size() - 1);
+                mTemperature.setText(String.valueOf(measurement.getTemperature()) + "°C");
+                mHumidity.setText(String.valueOf(measurement.getHumidity()) + "%");
+                setDataToGraphs(measurements);
             }
         });
+    }
 
+    private void setDataToGraphs(List<Measurement> measurementList) {
+        mTempGraphView.removeAllSeries();
+        mHumGraphView.removeAllSeries();
+        LineGraphSeries<DataPoint> tempSeries = new LineGraphSeries<DataPoint>();
+        tempSeries.setColor(Color.YELLOW);
+        tempSeries.setAnimated(false);
+        LineGraphSeries<DataPoint> humSeries = new LineGraphSeries<DataPoint>();
+        humSeries.setColor(Color.BLUE);
+        humSeries.setAnimated(false);
+        for (int i = 0; i < measurementList.size(); i++) {
+            tempSeries.appendData(new DataPoint(i, measurementList.get(i).getTemperature()), true, measurementList.size());
+            humSeries.appendData(new DataPoint(i, measurementList.get(i).getHumidity()), true, measurementList.size());
+        }
+        mTempGraphView.addSeries(tempSeries);
+        mHumGraphView.addSeries(humSeries);
+    }
+    private void setupGraphs(){
+        mTempGraphView.setTitle("Temperature °C");
+        mTempGraphView.setBackgroundColor(Color.BLACK);
+        mTempGraphView.setTitleColor(Color.WHITE);
+        mTempGraphView.getGridLabelRenderer().setGridColor(Color.WHITE);
+        mTempGraphView.getLegendRenderer().setTextColor(Color.WHITE);
+
+        mHumGraphView.setTitle("Humidity %");
+        mHumGraphView.setBackgroundColor(Color.BLACK);
+        mHumGraphView.setTitleColor(Color.WHITE);
+        mHumGraphView.getGridLabelRenderer().setGridColor(Color.WHITE);
+        mHumGraphView.getLegendRenderer().setTextColor(Color.WHITE);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        viewModel.stopMeasuring();
     }
 }

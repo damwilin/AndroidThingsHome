@@ -2,6 +2,7 @@ package com.lionapps.wili.androidthingshome.arduino;
 
 import com.google.android.things.pio.PeripheralManager;
 import com.google.android.things.pio.UartDevice;
+import com.lionapps.wili.androidthingshome.repository.Measurement;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -33,7 +34,15 @@ public class ArduinoDriver implements AutoCloseable {
         }
     }
 
-    public String getTemperature() {
+    public Measurement getMeasurement(){
+        return new Measurement.MeasurementBuilder()
+                .setTemperature(getTemperature())
+                .setHumidity(getHumidity())
+                .setBerlinLocalDateTime(true)
+                .build();
+    }
+
+    private float getTemperature() {
         String mode = "T";
         String response = "";
         byte[] buffer = new byte[10];
@@ -44,10 +53,10 @@ public class ArduinoDriver implements AutoCloseable {
             e.printStackTrace();
         }
 
-        return response;
+        return Float.parseFloat(response);
     }
 
-    public String getHumidity() {
+    private Float getHumidity() {
         String mode = "H";
         String response = "";
         byte[] buffer = new byte[10];
@@ -58,7 +67,7 @@ public class ArduinoDriver implements AutoCloseable {
             e.printStackTrace();
         }
 
-        return response;
+        return Float.parseFloat(response);
     }
 
     private String fillBuffer(byte[] buffer, String mode) throws IOException {
