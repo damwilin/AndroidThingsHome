@@ -1,14 +1,10 @@
 package com.lionapps.wili.androidthingshome.ui;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 import com.lionapps.wili.androidthingshome.R;
-import com.lionapps.wili.androidthingshome.repository.Measurement;
+import com.lionapps.wili.androidthingshome.data.database.Measurement;
 
 import java.util.List;
 
@@ -48,17 +44,12 @@ public class MainActivity extends AppCompatActivity {
     TextView mTemperature;
     @BindView(R.id.humidityTextView)
     TextView mHumidity;
-    @BindView(R.id.temperature_graph_view)
-    GraphView mTempGraphView;
-    @BindView(R.id.humidity_graph_view)
-    GraphView mHumGraphView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        setupGraphs();
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.startMeasuring();
 
@@ -68,40 +59,11 @@ public class MainActivity extends AppCompatActivity {
                 Measurement measurement = measurements.get(measurements.size() - 1);
                 mTemperature.setText(String.valueOf(measurement.getTemperature()) + "°C");
                 mHumidity.setText(String.valueOf(measurement.getHumidity()) + "%");
-                setDataToGraphs(measurements);
             }
         });
     }
 
-    private void setDataToGraphs(List<Measurement> measurementList) {
-        mTempGraphView.removeAllSeries();
-        mHumGraphView.removeAllSeries();
-        LineGraphSeries<DataPoint> tempSeries = new LineGraphSeries<DataPoint>();
-        tempSeries.setColor(Color.YELLOW);
-        tempSeries.setAnimated(false);
-        LineGraphSeries<DataPoint> humSeries = new LineGraphSeries<DataPoint>();
-        humSeries.setColor(Color.BLUE);
-        humSeries.setAnimated(false);
-        for (int i = 0; i < measurementList.size(); i++) {
-            tempSeries.appendData(new DataPoint(i, measurementList.get(i).getTemperature()), true, measurementList.size());
-            humSeries.appendData(new DataPoint(i, measurementList.get(i).getHumidity()), true, measurementList.size());
-        }
-        mTempGraphView.addSeries(tempSeries);
-        mHumGraphView.addSeries(humSeries);
-    }
-    private void setupGraphs(){
-        mTempGraphView.setTitle("Temperature °C");
-        mTempGraphView.setBackgroundColor(Color.BLACK);
-        mTempGraphView.setTitleColor(Color.WHITE);
-        mTempGraphView.getGridLabelRenderer().setGridColor(Color.WHITE);
-        mTempGraphView.getLegendRenderer().setTextColor(Color.WHITE);
 
-        mHumGraphView.setTitle("Humidity %");
-        mHumGraphView.setBackgroundColor(Color.BLACK);
-        mHumGraphView.setTitleColor(Color.WHITE);
-        mHumGraphView.getGridLabelRenderer().setGridColor(Color.WHITE);
-        mHumGraphView.getLegendRenderer().setTextColor(Color.WHITE);
-    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -36,17 +36,4 @@
 
     </LinearLayout>
 
-    <com.jjoe64.graphview.GraphView
-        android:id="@+id/temperature_graph_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_below="@id/linear_layout" />
-    <com.jjoe64.graphview.GraphView
-        android:id="@+id/humidity_graph_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_below="@id/temperature_graph_view" />
-
 </LinearLayout>

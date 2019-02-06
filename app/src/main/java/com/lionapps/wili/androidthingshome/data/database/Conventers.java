@@ -1,4 +1,4 @@
-package com.lionapps.wili.androidthingshome.repository;
+package com.lionapps.wili.androidthingshome.data.database;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

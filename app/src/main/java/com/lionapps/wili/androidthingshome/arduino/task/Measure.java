@@ -1,7 +1,7 @@
-package com.lionapps.wili.androidthingshome.task;
+package com.lionapps.wili.androidthingshome.arduino.task;
 
 import com.lionapps.wili.androidthingshome.arduino.ArduinoDriver;
-import com.lionapps.wili.androidthingshome.repository.Repository;
+import com.lionapps.wili.androidthingshome.data.Repository;
 
 import java.util.Timer;
 import java.util.TimerTask;

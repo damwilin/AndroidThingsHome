@@ -2,7 +2,7 @@ package com.lionapps.wili.androidthingshome.arduino;
 
 import com.google.android.things.pio.PeripheralManager;
 import com.google.android.things.pio.UartDevice;
-import com.lionapps.wili.androidthingshome.repository.Measurement;
+import com.lionapps.wili.androidthingshome.data.database.Measurement;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
