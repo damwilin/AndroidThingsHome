@@ -12,5 +12,5 @@ Hobby project. Application that takes measurements of humidity and air temperatu
 
 
 
-## Screenshots
-<img src="" width="250">
+## Photos
+<img src="https://raw.githubusercontent.com/damwilin/AndroidThingsHome/master/photo.jpg" width="520">
