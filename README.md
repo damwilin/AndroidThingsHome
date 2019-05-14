@@ -4,6 +4,9 @@ Hobby project. Application that takes measurements of humidity and air temperatu
 
 
 ## Built with:
+
+* [Android Things](https://developer.android.com/things)
+* [NXP i.MX7D](https://developer.android.com/things/hardware/imx7d)
 * [Arduino Uno](https://www.arduino.cc/)
 * [DHT22 Sensor](https://www.sparkfun.com/datasheets/Sensors/Temperature/DHT22.pdf)
 * [Room Persistence Library](https://developer.android.com/topic/libraries/architecture/room)
